@@ -23,6 +23,11 @@ func (Provider) CaddyModule() caddy.ModuleInfo {
 
 // Provision sets up the module. Implements caddy.Provisioner.
 func (p *Provider) Provision(ctx caddy.Context) error {
+	// Caddy can construct a Provider from JSON without going through the
+	// module constructor, so initialize the embedded provider before using it.
+	if p.Provider == nil {
+		p.Provider = new(dreamhost.Provider)
+	}
 	p.Provider.APIKey = caddy.NewReplacer().ReplaceAll(p.Provider.APIKey, "")
 	return nil
 }
